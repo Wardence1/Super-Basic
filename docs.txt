@@ -1,0 +1,20 @@
+Super Basic is based around super basic commands and stacks.
+There are no variables here.
+For each "data type" there's as stack.
+
+Data Types: Numbers, Strings
+
+COMMANDS:
+print <any> : prints out the first arg
+prints : prints out the string at the top of the stack
+printn : prints out the number at the top of the stack
+
+push <any> : pushes the first arg onto the stack based on its data type
+
+pops : pops the string on top of the string stack
+popn : pops the number on top of the number stack
+
+add <number> : adds the number to the number at the top of the number stack 
+
+inputs : gets a string of input from the user and pushes it onto the string stack
+inputn : gets a number of input from the user and pushes it onto the number stack

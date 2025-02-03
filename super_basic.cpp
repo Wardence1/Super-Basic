@@ -8,9 +8,10 @@ using namespace std;
 string keywords[] = {"print", "goto"};
 
 // Returns an entire string if quotes are used
+// Strings return with a quotation mark at [0]
 string getElement(istringstream &iss, string start) {
     if (start.find("\"") != string::npos) {
-        string word, str = start.substr(1);
+        string word, str = start;
         do {
             iss >> word;
             str += " " + word;
@@ -20,6 +21,7 @@ string getElement(istringstream &iss, string start) {
         return start;
     }
 }
+
 
 int main(int argc, char** argv) {
 
@@ -36,6 +38,7 @@ int main(int argc, char** argv) {
     }
 
     /* Tokenize Script */
+    // @todo escape sequences
     vector<string> command, arg1, arg2;
     string line;
     while (getline(file, line)) {
@@ -73,15 +76,38 @@ int main(int argc, char** argv) {
     }
 
     /* Go Through Script */
+    // @todo: error handling
     unsigned token = 0; // Current line of the script
-    string currentStr(""); // Current string in focus from the command "read"
+    vector<string> strStk;
+    vector<int> numStk;
 
     while (token < command.size()) {
 
         if (command[token] == "print") {
-            arg1[token] == "" ? cout << currentStr << "\n" : cout << arg1[token] << "\n";
-        } else if (command[token] == "read") {
-            getline(cin, currentStr);
+            cout << arg1[token].substr(1) << "\n";
+        } else if (command[token] == "prints") {
+            cout << strStk.front() << "\n";
+        } else if (command[token] == "printn") {
+            cout << numStk.front() << "\n";
+
+        } else if (command[token] == "push") {
+            arg1[token][0] == '\"' ? strStk.push_back(arg1[token].substr(1)) : numStk.push_back(stoi(arg1[token]));
+        } else if (command[token] == "pops") {
+            strStk.pop_back();
+        } else if (command[token] == "popn") {
+            numStk.pop_back();
+
+        } else if (command[token] == "add") {
+
+        } else if (command[token] == "inputs") {
+            string input;
+            getline(cin, input);
+            strStk.push_back(input);
+        } else if (command[token] == "inputn") {
+            string input;
+            getline(cin, input);
+            numStk.push_back(stoi(input));
+
         } else {
             fprintf(stderr, "Invalid command: \"%s\"\n", command[token].c_str());
             return 1;

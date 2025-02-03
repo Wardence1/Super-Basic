@@ -1,4 +1,6 @@
-print "Enter Something:"
-read
-print "You Entered:"
-print
+print "Enter a string:"
+inputs
+print "Enter an integer:"
+inputn
+prints
+printn
