@@ -7,16 +7,24 @@ using namespace std;
 
 string keywords[] = {"print", "goto"};
 
-// BIG TODO: strings with no spaces need to print.
 // Returns an entire string if quotes are used
 // Strings return with a quotation mark at [0]
 string getElement(istringstream &iss, string start) {
     if (start.find("\"") != string::npos) {
         string word, str = start;
+
+        // Check to see if string ends in the same word
+        bool done = false;
+        if (start.substr(start.find("\"")+1).find("\"") != string::npos) {
+            done = true;
+            str = str.substr(0, str.size()-1);    
+        }
+
         do {
             iss >> word;
             str += " " + word;
-        } while (word.find("\"") == string::npos);
+            if (word.find("\"") != string::npos) done = true;
+        } while (!done);
         return str.substr(0, str.size()-1);
     } else {
         return start;

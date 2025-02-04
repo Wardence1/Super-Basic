@@ -3,5 +3,5 @@ inputs
 print "Enter an integer: "
 inputn
 add 5
-prints " \n"
-printn " \n"
+prints "\n"
+printn "\n"
