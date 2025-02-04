@@ -193,6 +193,7 @@ int main(int argc, char** argv) {
         } else if (command[token] == "inputn") {
             string input;
             getline(cin, input);
+            if (input == "") input = "0";
             if (isNum(input)) {
                 numStk.push_back(stoi(input));
             } else {
