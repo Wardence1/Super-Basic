@@ -7,6 +7,7 @@ using namespace std;
 
 string keywords[] = {"print", "goto"};
 
+// BIG TODO: strings with no spaces need to print.
 // Returns an entire string if quotes are used
 // Strings return with a quotation mark at [0]
 string getElement(istringstream &iss, string start) {
@@ -22,6 +23,44 @@ string getElement(istringstream &iss, string start) {
     }
 }
 
+// Adds escape sequences to strings
+string parseString(string str) {
+
+    if (str == "") return str;
+    string temp = "\"";
+
+    for (int i = 1; i < str.size(); i++) {
+
+        if (str[i] == '\\') {
+            if (++i == str.size()) fprintf(stderr, "Error: string \"%s\" ends with \"\\\".\n", str.c_str()); 
+            switch(str[i]) {
+                case 'n':
+                    temp.push_back('\n');
+                    break;
+                case 't':
+                    temp.push_back('\t');
+                    break;
+                case '\\':
+                    temp.push_back('\\');
+                    break;
+                default:
+                    fprintf(stderr, "\'%c\' is not a valid escape sequence.\n", str[i]);
+            }
+            continue;
+        }
+        temp.push_back(str[i]);
+    }
+    return temp;
+}
+
+bool isNum(string str) {
+    for (int i = 0; i < str.size(); i++) {
+        if (str[i] < '0' || str[i] > '9') {
+            return false;
+        }
+    }
+    return true;
+}
 
 int main(int argc, char** argv) {
 
@@ -38,7 +77,6 @@ int main(int argc, char** argv) {
     }
 
     /* Tokenize Script */
-    // @todo escape sequences
     vector<string> command, arg1, arg2;
     string line;
     while (getline(file, line)) {
@@ -64,8 +102,9 @@ int main(int argc, char** argv) {
                 word = getElement(iss, word);
                 tokens.push_back(word); // arg2
             }
-            else
+            else {
                 tokens.push_back("");
+            }
         }
 
         for (int i = 0; i < tokens.size(); i++) {
@@ -75,8 +114,17 @@ int main(int argc, char** argv) {
         }
     }
 
+    /* Parse Strings */
+    for (int i = 0; i < command.size(); i++) {
+        if (arg1[i][0] == '\"') {
+            arg1[i] = parseString(arg1[i]);
+        }
+        if (arg2[i][0] == '\"') {
+            arg2[i] = parseString(arg2[i]);
+        }
+    }
+
     /* Go Through Script */
-    // @todo: error handling
     unsigned token = 0; // Current line of the script
     vector<string> strStk;
     vector<int> numStk;
@@ -84,11 +132,13 @@ int main(int argc, char** argv) {
     while (token < command.size()) {
 
         if (command[token] == "print") {
-            cout << arg1[token].substr(1) << "\n";
+            cout << arg1[token].substr(1);
         } else if (command[token] == "prints") {
-            cout << strStk.front() << "\n";
+            cout << strStk.front();
+            cout << arg1[token].substr(1);
         } else if (command[token] == "printn") {
-            cout << numStk.front() << "\n";
+            cout << numStk.front();
+            cout << arg1[token].substr(1);
 
         } else if (command[token] == "push") {
             arg1[token][0] == '\"' ? strStk.push_back(arg1[token].substr(1)) : numStk.push_back(stoi(arg1[token]));
@@ -98,6 +148,12 @@ int main(int argc, char** argv) {
             numStk.pop_back();
 
         } else if (command[token] == "add") {
+            if (isNum(arg1[token])) {
+                numStk[numStk.size()-1] += stoi(arg1[token]);
+            } else {
+                fprintf(stderr, "Error, line %d: The first arg of \"add\" is a number.", token);
+                return 1;
+            }
 
         } else if (command[token] == "inputs") {
             string input;
@@ -106,7 +162,12 @@ int main(int argc, char** argv) {
         } else if (command[token] == "inputn") {
             string input;
             getline(cin, input);
-            numStk.push_back(stoi(input));
+            if (isNum(input)) {
+                numStk.push_back(stoi(input));
+            } else {
+                fprintf(stderr, "Error: A number must be entered when \"inputn\" is called.\n");
+                return 1;
+            }
 
         } else {
             fprintf(stderr, "Invalid command: \"%s\"\n", command[token].c_str());

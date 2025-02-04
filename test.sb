@@ -1,6 +1,7 @@
-print "Enter a string:"
+print "Enter a string: "
 inputs
-print "Enter an integer:"
+print "Enter an integer: "
 inputn
-prints
-printn
+add 5
+prints " \n"
+printn " \n"

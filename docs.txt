@@ -6,15 +6,15 @@ Data Types: Numbers, Strings
 
 COMMANDS:
 print <any> : prints out the first arg
-prints : prints out the string at the top of the stack
-printn : prints out the number at the top of the stack
+prints <string> : prints out the string at the top of the stack, arg1 is optional and will be printed after
+printn <string> : prints out the number at the top of the stack, arg1 is optional and will be printed after
 
 push <any> : pushes the first arg onto the stack based on its data type
 
 pops : pops the string on top of the string stack
 popn : pops the number on top of the number stack
 
-add <number> : adds the number to the number at the top of the number stack 
+add <number> : adds arg1 to the number at the top of the number stack 
 
 inputs : gets a string of input from the user and pushes it onto the string stack
 inputn : gets a number of input from the user and pushes it onto the number stack
