@@ -9,7 +9,7 @@ string keywords[] = {"print", "goto"};
 
 // Returns an entire string if quotes are used
 // Strings return with a quotation mark at [0]
-string getElement(istringstream &iss, string start) {
+string getElement(istringstream &iss, string start, unsigned lineNum) {
     if (start.find("\"") != string::npos) {
         string word, str = start;
 
@@ -21,7 +21,11 @@ string getElement(istringstream &iss, string start) {
         }
 
         do {
-            iss >> word;
+            if (!(iss >> word) && !done) {
+                fprintf(stderr, "Error, line %d: Missing quote.\n", lineNum);
+                exit(-1);
+            }
+
             str += " " + word;
             if (word.find("\"") != string::npos) done = true;
         } while (!done);
@@ -32,7 +36,7 @@ string getElement(istringstream &iss, string start) {
 }
 
 // Adds escape sequences to strings
-string parseString(string str) {
+string parseString(string str, unsigned lineNum) {
 
     if (str == "") return str;
     string temp = "\"";
@@ -40,7 +44,10 @@ string parseString(string str) {
     for (int i = 1; i < str.size(); i++) {
 
         if (str[i] == '\\') {
-            if (++i == str.size()) fprintf(stderr, "Error: string \"%s\" ends with \"\\\".\n", str.c_str()); 
+            if (++i == str.size()) {
+                fprintf(stderr, "Error, line %d: Line ends with \"\\\".\n", lineNum); 
+                exit(-1);
+            }
             switch(str[i]) {
                 case 'n':
                     temp.push_back('\n');
@@ -87,9 +94,12 @@ int main(int argc, char** argv) {
     /* Tokenize Script */
     vector<string> command, arg1, arg2;
     string line;
+    int lineNum = 0;
     while (getline(file, line)) {
 
+        lineNum++;
         if (line == "") continue;
+        if (line[line.find_first_not_of(' ')] == ';') continue;
 
         istringstream iss(line);
         vector<string> tokens;
@@ -100,14 +110,15 @@ int main(int argc, char** argv) {
             tokens.push_back(word); // command
 
             if (iss >> word) {
-                word = getElement(iss, word);
+                word = getElement(iss, word, lineNum);
                 tokens.push_back(word); // arg1
             }
-            else
+            else {
                 tokens.push_back("");
+            }
 
             if (iss >> word) {
-                word = getElement(iss, word);
+                word = getElement(iss, word, lineNum);
                 tokens.push_back(word); // arg2
             }
             else {
@@ -125,15 +136,16 @@ int main(int argc, char** argv) {
     /* Parse Strings */
     for (int i = 0; i < command.size(); i++) {
         if (arg1[i][0] == '\"') {
-            arg1[i] = parseString(arg1[i]);
+            arg1[i] = parseString(arg1[i], i);
         }
         if (arg2[i][0] == '\"') {
-            arg2[i] = parseString(arg2[i]);
+            arg2[i] = parseString(arg2[i], i);
         }
     }
 
     /* Go Through Script */
-    unsigned token = 0; // Current line of the script
+    // Note: token does not represent line count, commented/null lines are exluded during tokenization.
+    unsigned token = 0; // Current command of the script
     vector<string> strStk;
     vector<int> numStk;
 
@@ -142,24 +154,35 @@ int main(int argc, char** argv) {
         if (command[token] == "print") {
             cout << arg1[token].substr(1);
         } else if (command[token] == "prints") {
+            if (strStk.empty()) { fprintf(stderr, "Error, command \"prints\": Can't print from an empty stack.\n"); exit(-1); }
             cout << strStk.front();
-            cout << arg1[token].substr(1);
+            if (arg1[token] != "") cout << arg1[token].substr(1);
         } else if (command[token] == "printn") {
+            if (numStk.empty()) { fprintf(stderr, "Error, command \"printn\": Can't print from an empty stack.\n"); exit(-1); };
             cout << numStk.front();
-            cout << arg1[token].substr(1);
+            if (arg1[token] != "")cout << arg1[token].substr(1);
 
         } else if (command[token] == "push") {
             arg1[token][0] == '\"' ? strStk.push_back(arg1[token].substr(1)) : numStk.push_back(stoi(arg1[token]));
         } else if (command[token] == "pops") {
+            if (strStk.empty()) { fprintf(stderr, "Error, command \"pops\": Can't pop from an empty stack.\n"); exit(-1); };
             strStk.pop_back();
         } else if (command[token] == "popn") {
+            if (numStk.empty()) { fprintf(stderr, "Error, command \"popn\": Can't pop from an empty stack.\n"); exit(-1); };
             numStk.pop_back();
 
         } else if (command[token] == "add") {
             if (isNum(arg1[token])) {
                 numStk[numStk.size()-1] += stoi(arg1[token]);
             } else {
-                fprintf(stderr, "Error, line %d: The first arg of \"add\" is a number.", token);
+                fprintf(stderr, "Error, The first arg of \"add\" is a number.");
+                return 1;
+            }
+        } else if (command[token] == "sub") {
+            if (isNum(arg1[token])) {
+                numStk[numStk.size()-1] -= stoi(arg1[token]);
+            } else {
+                fprintf(stderr, "Error, The first arg of \"sub\" is a number.");
                 return 1;
             }
 

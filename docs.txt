@@ -14,7 +14,10 @@ push <any> : pushes the first arg onto the stack based on its data type
 pops : pops the string on top of the string stack
 popn : pops the number on top of the number stack
 
-add <number> : adds arg1 to the number at the top of the number stack 
+add <number> : adds arg1 to the number at the top of the number stack
+sub <number> : subtracts arg1 from the number at the top of the number stack
 
 inputs : gets a string of input from the user and pushes it onto the string stack
 inputn : gets a number of input from the user and pushes it onto the number stack
+
+; : comments out the line

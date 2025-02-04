@@ -1,7 +1,9 @@
-print "Enter a string: "
+print "Hello Git user, what's your name?\n"
 inputs
-print "Enter an integer: "
+print "How old are you?\n"
 inputn
-add 5
-prints "\n"
-printn "\n"
+print "Hello "
+prints
+print ", you are "
+printn
+print " years old.\n"
