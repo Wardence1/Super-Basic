@@ -5,7 +5,9 @@
 
 using namespace std;
 
-string keywords[] = {"print", "goto"};
+vector<string> strStk;
+vector<int> numStk;
+vector<pair<string, int>> labels;
 
 // Returns an entire string if quotes are used
 // Strings return with a quotation mark at [0]
@@ -146,8 +148,6 @@ int main(int argc, char** argv) {
     /* Go Through Script */
     // Note: token does not represent line count, commented/null lines are exluded during tokenization.
     unsigned token = 0; // Current command of the script
-    vector<string> strStk;
-    vector<int> numStk;
 
     while (token < command.size()) {
 
@@ -201,9 +201,27 @@ int main(int argc, char** argv) {
                 return 1;
             }
 
+        } else if (command[token] == "jmp") {
+            
+            bool end = false;
+            for (auto label : labels) {
+                if (label.first == arg1[token]) {
+                    token = label.second;
+                    end = true;
+                    break;
+                }
+            }
+            if (end) continue;
+            fprintf(stderr, "Error: %s is not a registered label.\n", arg1[token].c_str());
+            exit(1);
+            
+        
+        } else if (command[token][command[token].find_last_not_of(' ')] == ':') {
+            labels.push_back({command[token].substr(0, command[token].find_last_not_of(' ')), token});
+
         } else {
             fprintf(stderr, "Invalid command: \"%s\"\n", command[token].c_str());
-            return 1;
+            exit(1);
         }
 
         token++;

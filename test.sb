@@ -1,9 +1,3 @@
-print "Hello Git user, what's your name?\n"
-inputs
-print "How old are you?\n"
-inputn
-print "Hello "
-prints
-print ", you are "
-printn
-print " years old.\n"
+start:
+print "LOOPING\n"
+jmp start

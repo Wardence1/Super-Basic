@@ -20,4 +20,6 @@ sub <number> : subtracts arg1 from the number at the top of the number stack
 inputs : gets a string of input from the user and pushes it onto the string stack
 inputn : gets a number of input from the user and pushes it onto the number stack
 
+jmp <label> : jumps to the specified label
+
 ; : comments out the line
