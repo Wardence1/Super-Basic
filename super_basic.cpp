@@ -8,6 +8,8 @@ using namespace std;
 vector<string> strStk;
 vector<int> numStk;
 vector<pair<string, int>> labels;
+vector<string> command, arg1, arg2;
+bool carryFlag = false;
 
 // Returns an entire string if quotes are used
 // Strings return with a quotation mark at [0]
@@ -79,6 +81,18 @@ bool isNum(string str) {
     return true;
 }
 
+bool jump(unsigned& token) {
+    bool end = false;
+    for (auto label : labels) {
+        if (label.first == arg1[token]) {
+            token = label.second+1;
+            return true;
+        }
+    }
+    fprintf(stderr, "Error: %s is not a registered label.\n", arg1[token].c_str());
+    exit(1);
+}
+
 int main(int argc, char** argv) {
 
     /* Error Handling */
@@ -94,7 +108,6 @@ int main(int argc, char** argv) {
     }
 
     /* Tokenize Script */
-    vector<string> command, arg1, arg2;
     string line;
     int lineNum = 0;
     while (getline(file, line)) {
@@ -142,6 +155,14 @@ int main(int argc, char** argv) {
         }
         if (arg2[i][0] == '\"') {
             arg2[i] = parseString(arg2[i], i);
+        }
+    }
+
+    /* Commmand Declarations */
+    for (int i = 0; i < command.size(); i++) {
+        
+        if (command[i][command[i].find_last_not_of(' ')] == ':') {
+            labels.push_back({command[i].substr(0, command[i].find_last_not_of(' ')), i});
         }
     }
 
@@ -201,25 +222,46 @@ int main(int argc, char** argv) {
                 return 1;
             }
 
+        } else if (command[token] == "cmp") {
+            
+            if (arg2[token] == "" || !isNum(arg2[token])) {
+                fprintf(stderr, "Error: arg2 of \"cmp\" needs to contain a number.\n");
+                exit(-1);
+            }
+            if (numStk.empty()) { fprintf(stderr, "Error, command \"cmp\": Can't compare to an empty stack.\n"); exit(-1); };
+
+            int num = stoi(arg2[token]);
+
+            if (arg1[token] == "=") {
+                carryFlag = numStk.front() == num;
+            } else if (arg1[token] == ">") {
+                carryFlag = numStk.front() > num;
+            } else if (arg1[token] == "<") {
+                carryFlag = num < numStk.front();
+            }
+
         } else if (command[token] == "jmp") {
             
-            bool end = false;
-            for (auto label : labels) {
-                if (label.first == arg1[token]) {
-                    token = label.second;
-                    end = true;
-                    break;
-                }
-            }
-            if (end) continue;
-            fprintf(stderr, "Error: %s is not a registered label.\n", arg1[token].c_str());
-            exit(1);
-            
+            jump(token);
+            continue;
+
+        } else if (command[token] == "jmpi") {
         
-        } else if (command[token][command[token].find_last_not_of(' ')] == ':') {
-            labels.push_back({command[token].substr(0, command[token].find_last_not_of(' ')), token});
+            if (carryFlag) {
+                
+                jump(token);
+                continue;
+            }
 
         } else {
+
+            // Check to see if the command is a label
+            bool end = false;
+            for (auto label : labels) {
+                if (label.first + ":" == command[token]) {end = true; break;}
+            }
+            if (end) break;
+
             fprintf(stderr, "Invalid command: \"%s\"\n", command[token].c_str());
             exit(1);
         }

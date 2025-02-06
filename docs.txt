@@ -3,6 +3,7 @@ There are no variables here.
 For each "data type" there's as stack.
 
 Data Types: Numbers, Strings
+<symbol> could be "=", ">", or "<"
 
 COMMANDS:
 print <any> : prints out the first arg
@@ -20,6 +21,9 @@ sub <number> : subtracts arg1 from the number at the top of the number stack
 inputs : gets a string of input from the user and pushes it onto the string stack
 inputn : gets a number of input from the user and pushes it onto the number stack
 
+cmp <symbol> <number> : Sets the carry flag based on the top number in the number stack and the symbol
+
 jmp <label> : jumps to the specified label
+jmpn <label> <number> : jumps if the carry flag is set to true
 
 ; : comments out the line

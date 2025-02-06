@@ -1,3 +1,12 @@
-start:
-print "LOOPING\n"
 jmp start
+answer:
+print "You got the number right!!!\n"
+jmp end
+
+start:
+print "Enter a number: "
+inputn
+cmp = 4
+jmpi answer
+
+end:
