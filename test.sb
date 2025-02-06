@@ -15,7 +15,7 @@ jmp end
 start:
 print "Enter a number: "
 inputn
-cmp = 00
+cmp = 0
 jmpi equal
 cmp < 0
 jmpi less
