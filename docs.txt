@@ -2,8 +2,9 @@ Super Basic is based around super basic commands and stacks.
 There are no variables here.
 For each "data type" there's as stack.
 
-Data Types: Numbers, Strings
-<symbol> could be "=", ">", or "<"
+Data Types:Strings
+<number> All integers
+<symbol> Could be "=", ">", or "<". The symbol does not have to be in quotes.
 
 COMMANDS:
 print <any> : prints out the first arg

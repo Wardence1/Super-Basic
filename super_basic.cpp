@@ -74,7 +74,7 @@ string parseString(string str, unsigned lineNum) {
 
 bool isNum(string str) {
     for (int i = 0; i < str.size(); i++) {
-        if (str[i] < '0' || str[i] > '9') {
+        if ((str[i] < '-' || str[i] > '9') || str[i] == '`') {
             return false;
         }
     }
@@ -237,7 +237,7 @@ int main(int argc, char** argv) {
             } else if (arg1[token] == ">") {
                 carryFlag = numStk.front() > num;
             } else if (arg1[token] == "<") {
-                carryFlag = num < numStk.front();
+                carryFlag = numStk.front() < num;
             }
 
         } else if (command[token] == "jmp") {

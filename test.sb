@@ -1,12 +1,25 @@
 jmp start
-answer:
-print "You got the number right!!!\n"
+
+; Print Output
+equal:
+print "The number's equal to zero.\n"
+jmp end
+less:
+print "The number's less then zero.\n"
+jmp end
+greater:
+print "The number's greater then zero.\n"
 jmp end
 
+; Query the player
 start:
 print "Enter a number: "
 inputn
-cmp = 4
-jmpi answer
+cmp = 00
+jmpi equal
+cmp < 0
+jmpi less
+cmp > 0
+jmpi greater
 
 end:
