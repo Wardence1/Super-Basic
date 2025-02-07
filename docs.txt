@@ -1,30 +1,37 @@
 Super Basic is based around super basic commands and stacks.
 There are no variables here.
 For each "data type" there's as stack.
+Programs will start at the "start" label.
+A command will at most have two arguments.
 
 Data Types:Strings
+<string> a string of text beginning and ending with quotes
 <number> All integers
 <symbol> Could be "=", ">", or "<". The symbol does not have to be in quotes.
+<label> Defined as "name" then ":", labels are not type sensitive.
 
 COMMANDS:
-print <any> : prints out the first arg
-prints <string> : prints out the string at the top of the stack, arg1 is optional and will be printed after
-printn <string> : prints out the number at the top of the stack, arg1 is optional and will be printed after
+print <any> : Prints out arg1
+prints <string> : Prints out the string at the top of the stack, arg1 is optional and will be printed after
+printn <string> : Prints out the number at the top of the stack, arg1 is optional and will be printed after
 
-push <any> : pushes the first arg onto the stack based on its data type
+push <any> : Pushes the first arg onto the stack based on its data type
 
-pops : pops the string on top of the string stack
-popn : pops the number on top of the number stack
+pops : Pops the string on top of the string stack
+popn : Pops the number on top of the number stack
 
-add <number> : adds arg1 to the number at the top of the number stack
-sub <number> : subtracts arg1 from the number at the top of the number stack
+add <number> : Adds arg1 to the number at the top of the number stack
+sub <number> : Subtracts arg1 from the number at the top of the number stack
 
-inputs : gets a string of input from the user and pushes it onto the string stack
-inputn : gets a number of input from the user and pushes it onto the number stack
+inputs : Gets a string of input from the user and pushes it onto the string stack
+inputn : Gets a number of input from the user and pushes it onto the number stack
 
 cmp <symbol> <number> : Sets the carry flag based on the top number in the number stack and the symbol
 
-jmp <label> : jumps to the specified label
-jmpn <label> <number> : jumps if the carry flag is set to true
+jmp <label> : Jumps to the specified label
+jmpt <label> <number> : Jumps if the carry flag is set to true
+jmpf <label> <number> : Jumps if the carry flag is set to false
 
-; : comments out the line
+exit : Ends the program
+
+; : Comments out the line

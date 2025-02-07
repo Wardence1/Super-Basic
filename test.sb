@@ -1,25 +1,22 @@
-jmp start
-
 ; Print Output
 equal:
 print "The number's equal to zero.\n"
-jmp end
+exit
 less:
 print "The number's less then zero.\n"
-jmp end
+exit
 greater:
 print "The number's greater then zero.\n"
-jmp end
+exit
 
 ; Query the player
-start:
+START:
 print "Enter a number: "
 inputn
 cmp = 0
-jmpi equal
+jmpt equal
 cmp < 0
-jmpi less
+jmpt less
 cmp > 0
-jmpi greater
+jmpt greater
 
-end:
